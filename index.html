@@ -3,836 +3,379 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080e1c">
-  <meta name="description" content="Telegram-боты: звёзды и Premium для Telegram, обмен криптовалюты.">
-  <title>Dogemo — боты в Telegram</title>
-
+  <meta name="theme-color" content="#080d18">
+  <meta name="description" content="Dogemo — удобные Telegram-сервисы: Telegram Stars, Premium и обмен криптовалюты.">
+  <title>Dogemo — сервисы в Telegram</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       color-scheme: dark;
-      --background: #080e1c;
-      --text: #eef4ff;
-      --muted: #96a8c8;
-      --accent: #a5c5ff;
-      --border: rgba(151, 186, 255, 0.16);
+      --bg: #080d18;
+      --bg-soft: #0d1525;
+      --surface: rgba(17, 29, 49, .76);
+      --surface-strong: #111e33;
+      --text: #edf4ff;
+      --muted: #9aabc5;
+      --muted-2: #7386a5;
+      --blue: #91baff;
+      --blue-strong: #6d9fff;
+      --line: rgba(151, 186, 255, .15);
+      --line-hover: rgba(151, 186, 255, .34);
+      --shadow: 0 24px 80px rgba(0, 0, 0, .28);
+      --radius: 24px;
+      --content: 1160px;
     }
 
     * { box-sizing: border-box; }
-
-    html {
-      scroll-behavior: smooth;
-      scroll-padding-top: 100px;
-    }
-
+    html { scroll-behavior: smooth; scroll-padding-top: 100px; }
     body {
       margin: 0;
-      background: var(--background);
-      color: var(--text);
-      font-family: Inter, Arial, sans-serif;
-      line-height: 1.65;
       overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Manrope', Inter, Arial, sans-serif;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
     }
-
-    a { color: inherit; text-decoration: none; }
-    a:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 6px;
-    }
-
-    .container {
-      width: min(1180px, calc(100% - 48px));
-      margin-inline: auto;
-    }
-
-    .background {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .background::before,
-    .background::after {
+    body::before, body::after {
       content: "";
-      position: absolute;
-      width: 650px;
-      height: 650px;
+      position: fixed;
+      z-index: -2;
+      width: 560px;
+      height: 560px;
       border-radius: 50%;
-      filter: blur(140px);
-      opacity: 0.18;
+      filter: blur(115px);
+      opacity: .16;
+      pointer-events: none;
+      animation: ambient-drift 18s ease-in-out infinite alternate;
     }
+    body::before { top: -330px; right: -180px; background: #2868eb; }
+    body::after { left: -360px; top: 58%; background: #254ab8; animation-delay: -8s; }
+    a { color: inherit; text-decoration: none; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a:focus-visible, summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 5px; }
+    .container { width: min(var(--content), calc(100% - 48px)); margin-inline: auto; }
+    .muted { color: var(--muted); }
 
-    .background::before {
-      top: -350px;
-      right: -150px;
-      background: #2861e7;
-    }
-
-    .background::after {
-      top: 850px;
-      left: -450px;
-      background: #3254d6;
-    }
-
-    header {
+    .site-header {
       position: sticky;
       top: 0;
-      z-index: 10;
-      border-bottom: 1px solid var(--border);
-      background: rgba(8, 14, 28, 0.78);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      z-index: 20;
+      border-bottom: 1px solid rgba(151, 186, 255, .1);
+      background: rgba(8, 13, 24, .78);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
     }
-
-    nav {
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
+    .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .logo { display: inline-flex; align-items: center; gap: 10px; font-size: 25px; font-weight: 800; letter-spacing: -1.3px; }
+    .logo-mark {
+      display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(145,186,255,.35);
+      border-radius: 11px; color: #d9e8ff; font-size: 17px;
+      background: linear-gradient(145deg, rgba(120,169,255,.28), rgba(33,66,124,.18));
+      box-shadow: 0 0 24px rgba(91,145,255,.12);
     }
+    .logo span:last-child { color: var(--blue); }
+    .nav-links { display: flex; align-items: center; gap: 27px; color: #b4c3da; font-size: 13px; font-weight: 600; }
+    .nav-links a { transition: color .25s ease; }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta { padding: 10px 16px; border: 1px solid var(--line-hover); border-radius: 999px; color: #dce9ff; transition: background .25s, border-color .25s, transform .25s; }
+    .nav-cta:hover { transform: translateY(-2px); background: rgba(125,169,244,.1); border-color: rgba(151,186,255,.55); }
 
-    .logo {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -1px;
+    .hero { position: relative; display: grid; grid-template-columns: 1.02fr .98fr; align-items: center; gap: 48px; min-height: 590px; padding: 76px 0 82px; }
+    .hero-copy { position: relative; z-index: 2; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: #a9c4ed; font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+    .eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: #8db7ff; box-shadow: 0 0 16px #73a5ff; animation: pulse 2.4s ease-in-out infinite; }
+    h1 { max-width: 680px; margin: 23px 0 20px; font-size: clamp(46px, 6.3vw, 76px); line-height: 1.05; font-weight: 700; letter-spacing: -4px; }
+    h1 span { color: var(--blue); text-shadow: 0 0 42px rgba(116,164,255,.14); }
+    .hero-text { max-width: 510px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.9; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+    .btn { min-height: 49px; display: inline-flex; align-items: center; justify-content: center; gap: 13px; padding: 12px 19px; border: 1px solid transparent; border-radius: 13px; font: inherit; font-size: 12px; font-weight: 800; transition: transform .25s ease, box-shadow .25s ease, background .25s ease, border-color .25s ease; }
+    .btn:hover { transform: translateY(-3px); }
+    .btn-primary { color: #10213d; background: linear-gradient(120deg, #b5d1ff, #82afff); box-shadow: 0 12px 32px rgba(81,137,236,.18); }
+    .btn-primary:hover { box-shadow: 0 16px 40px rgba(81,137,236,.3); }
+    .btn-secondary { color: #dce8fb; border-color: var(--line); background: rgba(255,255,255,.025); }
+    .btn-secondary:hover { border-color: var(--line-hover); background: rgba(255,255,255,.06); }
+    .hero-note { margin: 17px 0 0; color: var(--muted-2); font-size: 11px; }
+
+    .hero-visual { position: relative; display: grid; place-items: center; min-height: 390px; isolation: isolate; }
+    .visual-glow { position: absolute; width: 280px; height: 280px; border-radius: 50%; background: #397eff; filter: blur(90px); opacity: .2; animation: glow 7s ease-in-out infinite alternate; }
+    .visual-ring { position: absolute; width: 390px; height: 170px; border: 1px solid rgba(139,180,255,.32); border-radius: 50%; transform: rotate(-28deg); animation: orbit 22s linear infinite; }
+    .visual-ring.ring-two { width: 340px; height: 220px; border-color: rgba(139,180,255,.17); transform: rotate(48deg); animation-direction: reverse; animation-duration: 29s; }
+    .visual-core { position: relative; display: grid; place-items: center; width: 210px; height: 210px; border: 1px solid rgba(188,215,255,.45); border-radius: 50%; color: #dceaff; font-size: 82px; font-weight: 800; letter-spacing: -8px; background: radial-gradient(circle at 30% 23%, rgba(173,207,255,.62), transparent 42%), radial-gradient(circle at 70% 78%, #1b4ba9, #0e1c3d 72%); box-shadow: inset 0 0 35px rgba(0,0,0,.5), 0 0 90px rgba(76,132,255,.16); animation: core-float 6s ease-in-out infinite; }
+    .float-chip { position: absolute; display: grid; place-items: center; width: 64px; height: 64px; border: 1px solid rgba(157,197,255,.27); border-radius: 19px; color: #cde0ff; font-size: 30px; background: linear-gradient(145deg, rgba(39,67,108,.9), rgba(14,26,48,.9)); box-shadow: 0 18px 42px rgba(0,0,0,.25); backdrop-filter: blur(12px); animation: chip-float 5s ease-in-out infinite; }
+    .chip-star { top: 32px; left: 9%; }
+    .chip-exchange { right: 5%; bottom: 45px; animation-delay: -2.5s; }
+    .visual-caption { position: absolute; bottom: -7px; color: #758bad; font-size: 9px; letter-spacing: 2.5px; }
+
+    .section { padding: 76px 0; border-top: 1px solid var(--line); }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 30px; }
+    h2 { margin: 11px 0 0; font-size: clamp(29px, 4vw, 42px); line-height: 1.16; font-weight: 700; letter-spacing: -1.8px; }
+    .section-heading > p { max-width: 360px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
+    .services { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px; }
+    .service-card { position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 350px; border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(140deg, rgba(20,36,61,.88), rgba(11,20,36,.88)); box-shadow: 0 15px 50px rgba(0,0,0,.12); transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease; }
+    .service-card::before { content: ""; position: absolute; width: 260px; height: 260px; top: -130px; right: -90px; border-radius: 50%; background: rgba(69,125,232,.17); filter: blur(65px); transition: opacity .35s ease, transform .5s ease; }
+    .service-card:hover { transform: translateY(-7px); border-color: var(--line-hover); box-shadow: var(--shadow); }
+    .service-card:hover::before { transform: scale(1.25); opacity: 1.4; }
+    .service-top { position: relative; display: flex; align-items: center; gap: 15px; padding: 27px 28px 22px; border-bottom: 1px solid rgba(151,186,255,.1); }
+    .service-icon { display: grid; place-items: center; flex: 0 0 61px; width: 61px; height: 61px; border: 1px solid rgba(168,204,255,.25); border-radius: 19px; color: #c7deff; font-size: 32px; background: linear-gradient(145deg, rgba(136,186,255,.16), rgba(28,67,129,.15)); }
+    .service-type { margin-left: auto; padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; color: #b5c9e8; font-size: 10px; white-space: nowrap; }
+    .service-body { position: relative; display: flex; flex: 1; flex-direction: column; align-items: flex-start; padding: 25px 28px 28px; }
+    .service-label { color: #86a9df; font-size: 9px; font-weight: 800; letter-spacing: 1.8px; text-transform: uppercase; }
+    h3 { margin: 7px 0 10px; font-size: 25px; line-height: 1.25; font-weight: 700; letter-spacing: -.8px; }
+    .service-body p { max-width: 510px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.85; }
+    .tags { display: flex; flex-wrap: wrap; gap: 7px; margin: 19px 0 23px; }
+    .tags span { padding: 5px 9px; border: 1px solid var(--line); border-radius: 7px; color: #afc2df; font-size: 10px; }
+    .service-link { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 48px; margin-top: auto; padding: 12px 16px; border-radius: 12px; color: #10213d; background: linear-gradient(120deg,#b5d1ff,#82afff); font-size: 12px; font-weight: 800; transition: transform .25s ease, box-shadow .25s ease; }
+    .service-link:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(81,137,236,.2); }
+    .service-link span:last-child { font-size: 18px; }
+
+    .steps { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 15px; }
+    .step { min-height: 190px; padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: rgba(14,25,43,.58); transition: transform .3s ease, background .3s ease, border-color .3s ease; }
+    .step:hover { transform: translateY(-5px); border-color: var(--line-hover); background: rgba(20,35,59,.8); }
+    .step-number { display: inline-grid; place-items: center; width: 35px; height: 35px; border: 1px solid rgba(145,186,255,.3); border-radius: 11px; color: var(--blue); font-size: 11px; font-weight: 800; }
+    .step h3 { margin-top: 19px; font-size: 17px; }
+    .step p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.8; }
+
+    .trust-panel { position: relative; overflow: hidden; display: grid; grid-template-columns: .9fr 1.1fr; gap: 35px; margin: 20px 0 76px; padding: 38px; border: 1px solid rgba(114,158,240,.23); border-radius: 25px; background: radial-gradient(ellipse at 100% 0, rgba(49,94,203,.22), transparent 65%), #101b2e; }
+    .trust-panel h2 { font-size: 30px; }
+    .trust-panel > div:first-child p { max-width: 420px; color: var(--muted); font-size: 13px; line-height: 1.85; }
+    .trust-points { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 17px; align-content: center; }
+    .trust-point { padding: 17px; border: 1px solid rgba(151,186,255,.13); border-radius: 15px; background: rgba(8,15,28,.32); }
+    .trust-point strong { display: block; margin-bottom: 5px; font-size: 12px; }
+    .trust-point span { color: var(--muted); font-size: 11px; line-height: 1.7; }
+
+    .faq-list { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; align-items: start; }
+    details { border: 1px solid var(--line); border-radius: 14px; background: rgba(14,25,43,.56); transition: border-color .25s ease, background .25s ease; }
+    details[open] { border-color: var(--line-hover); background: rgba(18,32,54,.8); }
+    summary { position: relative; padding: 17px 48px 17px 18px; cursor: pointer; list-style: none; font-size: 12px; font-weight: 800; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; position: absolute; top: 50%; right: 18px; color: var(--blue); font-size: 20px; font-weight: 400; transform: translateY(-50%); transition: transform .25s ease; }
+    details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+    details p { margin: 0; padding: 0 18px 18px; color: var(--muted); font-size: 12px; line-height: 1.8; }
+    details p a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
+
+    .contact-band { display: flex; align-items: center; justify-content: space-between; gap: 28px; margin: 65px 0 70px; padding: 30px 34px; border: 1px solid var(--line-hover); border-radius: 20px; background: linear-gradient(110deg, rgba(19,37,66,.92), rgba(13,24,42,.85)); }
+    .contact-band h2 { margin: 0; font-size: 25px; }
+    .contact-band p { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
+    .contact-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .contact-actions .btn { white-space: nowrap; }
+
+    .footer { padding: 25px 0 32px; border-top: 1px solid var(--line); color: var(--muted-2); font-size: 11px; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .footer .logo { color: #c5d7f1; font-size: 20px; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
+    .footer-links a { transition: color .2s; }
+    .footer-links a:hover { color: #fff; }
+    .mobile-dock { display: none; }
+
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .75s cubic-bezier(.2,.7,.2,1), transform .75s cubic-bezier(.2,.7,.2,1); transition-delay: var(--delay, 0ms); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .hero-copy.reveal { transform: translateY(18px); }
+    .hero-copy.reveal.is-visible { transform: translateY(0); }
+
+    @keyframes pulse { 0%,100% { opacity: 1; box-shadow: 0 0 15px #73a5ff; } 50% { opacity: .55; box-shadow: 0 0 5px #73a5ff; } }
+    @keyframes ambient-drift { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(45px,35px,0) scale(1.12); } }
+    @keyframes glow { from { opacity: .14; transform: scale(.88); } to { opacity: .28; transform: scale(1.12); } }
+    @keyframes orbit { from { rotate: 0deg; } to { rotate: 360deg; } }
+    @keyframes core-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes chip-float { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-11px) rotate(4deg); } }
+
+    @media (max-width: 900px) {
+      .hero { gap: 20px; min-height: 530px; }
+      .hero-visual { transform: scale(.88); }
+      .trust-panel { grid-template-columns: 1fr; }
     }
-
-    .logo span { color: #83afff; }
-
-    .navigation {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      font-size: 13px;
-      color: #c0cfe8;
+    @media (max-width: 680px) {
+      html { scroll-padding-top: 82px; }
+      .container { width: calc(100% - 34px); }
+      .nav { min-height: 66px; }
+      .logo { font-size: 23px; }
+      .nav-links { gap: 0; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      .nav-cta { padding: 8px 12px; font-size: 11px; }
+      .hero { display: flex; flex-direction: column; align-items: stretch; gap: 4px; min-height: 0; padding: 57px 0 38px; }
+      h1 { margin: 19px 0 16px; font-size: clamp(43px, 12vw, 59px); letter-spacing: -2.8px; }
+      .hero-text { font-size: 13px; }
+      .hero-actions { margin-top: 23px; }
+      .hero-actions .btn { flex: 1 1 auto; }
+      .hero-visual { min-height: 285px; margin: 0 -18px; transform: scale(.78); transform-origin: center top; margin-bottom: -48px; }
+      .section { padding: 53px 0; }
+      .section-heading { display: block; margin-bottom: 23px; }
+      .section-heading > p { margin-top: 12px; }
+      h2 { font-size: 32px; }
+      .services, .steps, .faq-list { grid-template-columns: 1fr; }
+      .service-card { min-height: 0; }
+      .service-top { padding: 21px; }
+      .service-body { padding: 21px; }
+      .service-type { font-size: 9px; }
+      .steps { gap: 10px; }
+      .step { min-height: 0; }
+      .step h3 { margin-top: 12px; }
+      .trust-panel { gap: 22px; margin: 10px 0 52px; padding: 24px; }
+      .trust-panel h2 { font-size: 27px; }
+      .trust-points { gap: 9px; }
+      .trust-point { padding: 13px; }
+      .contact-band { display: block; margin: 48px 0 54px; padding: 24px; }
+      .contact-band h2 { font-size: 23px; }
+      .contact-actions { margin-top: 18px; }
+      .contact-actions .btn { flex: 1; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
+      .footer-links { gap: 13px; }
+      .mobile-dock { position: fixed; z-index: 30; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); left: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; border: 1px solid rgba(151,186,255,.22); border-radius: 17px; background: rgba(9,16,29,.88); box-shadow: 0 14px 45px rgba(0,0,0,.4); backdrop-filter: blur(18px); }
+      .mobile-dock a { display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 43px; padding: 8px 10px; border-radius: 11px; color: #10213d; background: linear-gradient(120deg,#b5d1ff,#82afff); font-size: 11px; font-weight: 800; }
+      .mobile-dock a:last-child { color: #dce8fb; border: 1px solid var(--line); background: rgba(255,255,255,.05); }
+      body { padding-bottom: 77px; }
     }
-
-    .navigation a { transition: color 0.2s; }
-    .navigation a:hover { color: white; }
-
-    .nav-button {
-      padding: 9px 18px;
-      border: 1px solid rgba(135, 167, 220, 0.4);
-      border-radius: 40px;
+    @media (max-width: 380px) {
+      .service-type { display: none; }
+      .hero-actions { flex-direction: column; }
+      .trust-points { grid-template-columns: 1fr; }
     }
-
-    .hero {
-      display: grid;
-      grid-template-columns: 1.15fr 1fr;
-      align-items: center;
-      gap: 32px;
-      padding: 100px 0 90px;
-    }
-
-    .eyebrow {
-      color: #a7bfe9;
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .status-dot {
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      margin-right: 10px;
-      border-radius: 50%;
-      background: #8cb7ff;
-      box-shadow: 0 0 18px #83adff;
-    }
-
-    h1 {
-      margin: 25px 0;
-      font-size: clamp(46px, 5.6vw, 76px);
-      font-weight: 600;
-      line-height: 1.09;
-      letter-spacing: -3px;
-    }
-
-    h1 span { color: var(--accent); }
-
-    .hero-description {
-      max-width: 460px;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.9;
-    }
-
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 32px;
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 22px;
-      padding: 14px 22px;
-      border: 1px solid transparent;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
-    }
-
-    .button:hover { transform: translateY(-3px); }
-
-    .button-primary {
-      background: var(--accent);
-      color: #122340;
-      box-shadow: 0 12px 45px rgba(82, 139, 245, 0.12);
-    }
-
-    .button-primary:hover {
-      background: #bfd6ff;
-      box-shadow: 0 12px 45px rgba(82, 139, 245, 0.25);
-    }
-
-    .button-secondary {
-      border-color: var(--border);
-      background: rgba(255, 255, 255, 0.025);
-    }
-
-    .hero-note {
-      margin-top: 20px;
-      color: #7187a8;
-      font-size: 11px;
-    }
-
-    .universe {
-      position: relative;
-      display: grid;
-      place-items: center;
-      height: 410px;
-      isolation: isolate;
-    }
-
-    .universe::before {
-      content: "";
-      position: absolute;
-      width: 280px;
-      height: 280px;
-      border-radius: 50%;
-      background: #3e79ff;
-      filter: blur(85px);
-      opacity: 0.23;
-    }
-
-    .planet {
-      display: grid;
-      place-items: center;
-      width: 240px;
-      height: 240px;
-      border-radius: 50%;
-      color: #daeaff;
-      font-size: 100px;
-      font-weight: 800;
-      background:
-        radial-gradient(circle at 30% 22%, rgba(143, 186, 255, 0.65), transparent 45%),
-        radial-gradient(circle at 70% 80%, #1944b4, #10234f);
-      box-shadow:
-        inset 1px 1px 4px rgba(181, 211, 255, 0.7),
-        inset -18px -15px 45px #020717,
-        0 0 90px rgba(73, 138, 255, 0.15);
-    }
-
-    .orbit {
-      position: absolute;
-      width: 410px;
-      height: 160px;
-      border: 1px solid rgba(135, 176, 250, 0.35);
-      border-radius: 50%;
-      transform: rotate(-30deg);
-    }
-
-    .orbit-second {
-      width: 365px;
-      height: 195px;
-      border-color: rgba(135, 176, 250, 0.16);
-      transform: rotate(42deg);
-    }
-
-    .floating-icon {
-      position: absolute;
-      display: grid;
-      place-items: center;
-      width: 72px;
-      height: 72px;
-      border: 1px solid rgba(157, 197, 255, 0.25);
-      border-radius: 20px;
-      color: #c3dcff;
-      font-size: 38px;
-      background: linear-gradient(140deg, rgba(40, 71, 110, 0.8), rgba(17, 29, 53, 0.9));
-      backdrop-filter: blur(16px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .floating-star { top: 35px; left: 43px; }
-    .floating-plane { right: 40px; bottom: 35px; animation-delay: -3s; }
-
-    .floating-icon svg { width: 34px; height: 34px; }
-
-    .universe-caption {
-      position: absolute;
-      bottom: 0;
-      color: #718ab1;
-      font-size: 9px;
-      letter-spacing: 2.5px;
-    }
-
-    .section {
-      padding: 65px 0;
-      border-top: 1px solid var(--border);
-    }
-
-    .section-heading {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 30px;
-      margin-bottom: 32px;
-    }
-
-    h2 {
-      margin: 12px 0 0;
-      font-size: 36px;
-      font-weight: 500;
-      line-height: 1.2;
-      letter-spacing: -1.4px;
-    }
-
-    .section-heading > p {
-      max-width: 310px;
-      margin: 0;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .projects {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 22px;
-    }
-
-    .project-card {
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      background: linear-gradient(120deg, rgba(21, 36, 60, 0.65), rgba(13, 22, 39, 0.7));
-      transition: transform 0.2s, border-color 0.2s;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .project-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(125, 166, 227, 0.45);
-    }
-
-    .project-art {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      height: 140px;
-      padding: 30px;
-      border-bottom: 1px solid var(--border);
-      background: radial-gradient(ellipse at 90% 10%, rgba(71, 122, 221, 0.18), transparent 70%);
-    }
-
-    .project-icon {
-      flex-shrink: 0;
-      display: grid;
-      place-items: center;
-      width: 74px;
-      height: 74px;
-      border: 1px solid rgba(168, 204, 255, 0.25);
-      border-radius: 22px;
-      color: #bad8ff;
-      font-size: 43px;
-      background: linear-gradient(140deg, rgba(136, 186, 255, 0.16), rgba(28, 67, 129, 0.15));
-    }
-
-    .project-type {
-      margin-left: auto;
-      padding: 4px 11px;
-      border: 1px solid var(--border);
-      border-radius: 30px;
-      color: #acc4e9;
-      font-size: 10px;
-    }
-
-    .project-body {
-      padding: 29px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-
-    .category {
-      color: #7d9ed4;
-      font-size: 9px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    h3 {
-      margin: 8px 0;
-      font-size: 25px;
-      font-weight: 500;
-      letter-spacing: -0.6px;
-    }
-
-    .project-body p {
-      min-height: 64px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin: 22px 0 25px;
-    }
-
-    .tags span {
-      padding: 4px 8px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: #a9bddd;
-      font-size: 10px;
-    }
-
-    /* Кнопка перехода в карточке */
-    .project-button {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-top: auto;
-      padding: 15px 22px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #122340;
-      background: var(--accent);
-      box-shadow: 0 12px 45px rgba(82, 139, 245, 0.12);
-      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
-    }
-
-    .project-button:hover {
-      transform: translateY(-3px);
-      background: #bfd6ff;
-      box-shadow: 0 12px 45px rgba(82, 139, 245, 0.25);
-    }
-
-    .project-button .arrow {
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .benefits {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 26px;
-    }
-
-    .benefit-number {
-      margin-bottom: 23px;
-      padding-bottom: 17px;
-      border-bottom: 1px solid var(--border);
-      color: #7c9dd2;
-      font-size: 11px;
-    }
-
-    .benefits h3 { font-size: 19px; }
-
-    .benefits p {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .care {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 30px;
-      margin: 15px 0 65px;
-      padding: 45px;
-      border: 1px solid rgba(114, 158, 240, 0.25);
-      border-radius: 24px;
-      background:
-        radial-gradient(ellipse at 100% 0, rgba(49, 94, 203, 0.25), transparent 70%),
-        #111c30;
-    }
-
-    .care h2 { font-size: 30px; }
-
-    .care p {
-      max-width: 630px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .care .button { flex-shrink: 0; }
-
-    .contacts {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 24px;
-    }
-
-    .contact {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding-top: 22px;
-      border-top: 1px solid var(--border);
-    }
-
-    .contact small {
-      display: block;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .contact strong { font-size: 16px; font-weight: 500; }
-
-    .arrow { flex-shrink: 0; font-size: 22px; }
-
-    footer {
-      padding: 27px 0 35px;
-      border-top: 1px solid var(--border);
-      color: #7588a8;
-      font-size: 11px;
-    }
-
-    .footer-content {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    footer .logo { color: #c0d2ed; font-size: 21px; }
-
-    .footer-links {
-      display: flex;
-      gap: 22px;
-    }
-
-    @keyframes float {
-      50% { transform: translateY(-12px) rotate(4deg); }
-    }
-
-    @media (max-width: 850px) {
-      .hero { padding: 65px 0; }
-      h1 { font-size: 53px; letter-spacing: -2.5px; }
-      .universe { height: 350px; transform: scale(0.8); }
-      .care { padding: 30px; }
-      .care h2 { font-size: 27px; }
-    }
-
-    @media (max-width: 620px) {
-      .container { width: calc(100% - 36px); }
-      nav { min-height: 70px; }
-      .logo { font-size: 25px; }
-      .navigation { gap: 0; }
-      .navigation-section { display: none; }
-      .hero { display: block; padding: 48px 0 35px; }
-      h1 { font-size: clamp(39px, 11vw, 51px); }
-      .hero-description { font-size: 14px; }
-      .universe { height: 310px; margin-inline: -15px; transform: scale(0.77); }
-      .orbit { width: 360px; }
-      .orbit-second { width: 330px; }
-      .projects, .benefits, .contacts { grid-template-columns: 1fr; }
-      .section-heading { display: block; }
-      .section-heading > p { margin-top: 16px; }
-      h2 { font-size: 30px; }
-      .section { padding: 45px 0; }
-      .project-art { height: 115px; padding: 24px; }
-      .project-body { padding: 24px; }
-      .project-body p { min-height: 0; }
-      .benefits { gap: 18px; }
-      .benefit-number { margin-bottom: 15px; }
-      .care { display: block; margin-bottom: 45px; padding: 26px; }
-      .care .button { margin-top: 10px; }
-      .footer-content { flex-wrap: wrap; }
-      .footer-links { width: 100%; }
-    }
-
     @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      * { animation: none !important; transition: none !important; }
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
     }
   </style>
 </head>
-
 <body>
-  <div class="background" aria-hidden="true"></div>
-
-  <header>
-    <nav class="container" aria-label="Основная навигация">
-      <a class="logo" href="#" aria-label="Dogemo — главная">
-        dogemo<span>.</span>
-      </a>
-
-      <div class="navigation">
-        <a class="navigation-section" href="#projects">Наши боты</a>
-        <a class="navigation-section" href="#why">Почему мы</a>
-        <a class="nav-button" href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">
-          Поддержка ↗
-        </a>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Основная навигация">
+      <a class="logo" href="#top" aria-label="Dogemo — на главную"><span class="logo-mark">D</span><span>dogemo<span>.</span></span></a>
+      <div class="nav-links">
+        <a href="#services">Сервисы</a>
+        <a href="#how">Как это работает</a>
+        <a href="#faq">Вопросы</a>
+        <a class="nav-cta" href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">Поддержка ↗</a>
       </div>
     </nav>
   </header>
 
-  <main class="container">
-    <section class="hero">
-      <div>
-        <div class="eyebrow">
-          <span class="status-dot"></span>
-          Боты Dogemo в Telegram
-        </div>
-
-        <h1>
-          Твой Telegram.<br>
-          Больше <span>возможностей.</span>
-        </h1>
-
-        <p class="hero-description">
-          Звёзды и Premium для Telegram, обмен криптовалюты на рубли.
-          Знакомые задачи — в удобных ботах, которые всегда под рукой.
-        </p>
-
-        <div class="buttons">
-          <a class="button button-primary" href="#projects">
-            Выбрать бота <span>↗</span>
-          </a>
-          <a class="button button-secondary" href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">
-            Задать вопрос
-          </a>
-        </div>
-
-        <p class="hero-note">
-          Открывай прямо в Telegram. Оставайся с Dogemo.
-        </p>
-      </div>
-
-      <div class="universe" aria-hidden="true">
-        <div class="orbit"></div>
-        <div class="orbit orbit-second"></div>
-        <div class="planet">D</div>
-
-        <div class="floating-icon floating-star">✦</div>
-        <div class="floating-icon floating-plane">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="m21 3-4 18-6-5-3 3 1-6L21 3 6 12l-4-2Z"/>
-          </svg>
-        </div>
-
-        <div class="universe-caption">
-          ONE FAMILY. MORE POSSIBILITIES.
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="projects">
-      <div class="section-heading">
-        <div>
-          <div class="eyebrow">01 / Наши боты</div>
-          <h2>Каждому делу — свой бот.</h2>
-        </div>
-        <p>
-          Выбери нужный сервис.<br>
-          Все основные ссылки — в одном месте.
-        </p>
-      </div>
-
-      <div class="projects">
-        <article class="project-card">
-          <div class="project-art">
-            <div class="project-icon" aria-hidden="true">✦</div>
-            <span class="project-type">Звёзды и Premium</span>
+  <main id="top">
+    <div class="container">
+      <section class="hero">
+        <div class="hero-copy reveal">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> Сервисы Dogemo в Telegram</div>
+          <h1>Нужный сервис.<br><span>В одном клике.</span></h1>
+          <p class="hero-text">Telegram Stars, Premium и обмен криптовалюты — выбирай нужное направление и переходи прямо в подходящий бот.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#services">Выбрать сервис <span>↘</span></a>
+            <a class="btn btn-secondary" href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">Задать вопрос ↗</a>
           </div>
+          <p class="hero-note">Все операции и актуальные условия — внутри соответствующего Telegram-бота.</p>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="visual-glow"></div><div class="visual-ring"></div><div class="visual-ring ring-two"></div>
+          <div class="visual-core">D</div>
+          <div class="float-chip chip-star">✦</div><div class="float-chip chip-exchange">⇄</div>
+          <div class="visual-caption">ONE PLACE. USEFUL SERVICES.</div>
+        </div>
+      </section>
 
-          <div class="project-body">
-            <span class="category">Для себя и для друзей</span>
-            <h3>@lotosrobot</h3>
-
-            <p>
-              Покупка Telegram Stars и подписки Telegram Premium —
-              себе или в подарок друзьям. Быстро, безопасно и по приятному курсу.
-            </p>
-
-            <div class="tags">
-              <span>Telegram Stars</span>
-              <span>Premium</span>
-              <span>Подарки</span>
+      <section class="section" id="services">
+        <div class="section-heading reveal">
+          <div><div class="eyebrow">01 / Наши сервисы</div><h2>Выбери, что тебе нужно.</h2></div>
+          <p>Два направления — без лишних переходов и запутанной навигации. Нажми на карточку, чтобы открыть нужный бот.</p>
+        </div>
+        <div class="services">
+          <article class="service-card reveal" style="--delay: 80ms">
+            <div class="service-top"><div class="service-icon" aria-hidden="true">✦</div><span class="service-type">Звёзды и Premium</span></div>
+            <div class="service-body">
+              <span class="service-label">Для себя и друзей</span>
+              <h3>Telegram Stars</h3>
+              <p>Покупка Telegram Stars и подписки Telegram Premium. Выбери нужную услугу и оформи заказ в Telegram.</p>
+              <div class="tags"><span>Telegram Stars</span><span>Premium</span><span>Подарки</span></div>
+              <a class="service-link" href="https://t.me/lotosrobot" target="_blank" rel="noopener noreferrer"><span>Открыть @lotosrobot</span><span>↗</span></a>
             </div>
-
-            <a class="project-button" href="https://t.me/lotosrobot" target="_blank" rel="noopener noreferrer">
-              Открыть @lotosrobot
-              <span class="arrow">↗</span>
-            </a>
-          </div>
-        </article>
-
-        <article class="project-card">
-          <div class="project-art">
-            <div class="project-icon" aria-hidden="true">⇄</div>
-            <span class="project-type">Криптообменник</span>
-          </div>
-
-          <div class="project-body">
-            <span class="category">Твоя крипта в Telegram</span>
-            <h3>@Dogemo_Exchangebot</h3>
-
-            <p>
-              Обмен криптовалюты на рубли и покупка крипты за рубли.
-              Простой интерфейс, понятный курс и быстрые выплаты.
-            </p>
-
-            <div class="tags">
-              <span>Крипта → рубли</span>
-              <span>Рубли → крипта</span>
-              <span>Быстрые выплаты</span>
+          </article>
+          <article class="service-card reveal" style="--delay: 160ms">
+            <div class="service-top"><div class="service-icon" aria-hidden="true">⇄</div><span class="service-type">Криптообменник</span></div>
+            <div class="service-body">
+              <span class="service-label">Обмен в Telegram</span>
+              <h3>Dogemo Exchange</h3>
+              <p>Покупка криптовалюты за рубли и обмен криптовалюты на рубли. Доступные направления и условия смотри в боте.</p>
+              <div class="tags"><span>Крипта → рубли</span><span>Рубли → крипта</span><span>Обмен</span></div>
+              <a class="service-link" href="https://t.me/Dogemo_Exchangebot" target="_blank" rel="noopener noreferrer"><span>Открыть @Dogemo_Exchangebot</span><span>↗</span></a>
             </div>
-
-            <a class="project-button" href="https://t.me/Dogemo_Exchangebot" target="_blank" rel="noopener noreferrer">
-              Открыть @Dogemo_Exchangebot
-              <span class="arrow">↗</span>
-            </a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" id="why">
-      <div class="section-heading">
-        <div>
-          <div class="eyebrow">02 / Почему выбирают нас</div>
-          <h2>Меньше лишнего.<br>Больше удобства.</h2>
+          </article>
         </div>
-        <p>
-          Развиваем проекты вокруг задач,
-          с которыми ты сталкиваешься каждый день.
-        </p>
-      </div>
+      </section>
 
-      <div class="benefits">
-        <article>
-          <div class="benefit-number">01 — Скорость</div>
-          <h3>Быстрые операции</h3>
-          <p>
-            Заявки обрабатываются оперативно —
-            без долгих ожиданий и лишних шагов.
-          </p>
-        </article>
-
-        <article>
-          <div class="benefit-number">02 — Доверие</div>
-          <h3>Честные отзывы</h3>
-          <p>
-            Реальные отзывы покупателей,
-            без накруток и приукрашиваний.
-          </p>
-        </article>
-
-        <article>
-          <div class="benefit-number">03 — Бонусы</div>
-          <h3>Розыгрыши среди покупателей</h3>
-          <p>
-            Регулярно проводим розыгрыши
-            для тех, кто пользуется нашими ботами.
-          </p>
-        </article>
-
-        <article>
-          <div class="benefit-number">04 — Комфорт</div>
-          <h3>Удобный интерфейс</h3>
-          <p>
-            Всё понятно с первого клика —
-            оформление заказа занимает секунды.
-          </p>
-        </article>
-      </div>
-    </section>
-
-    <section class="care">
-      <div>
-        <div class="eyebrow">Для нас это главное</div>
-        <h2>
-          «Покупатели всегда довольны» —<br>
-          наш ориентир.
-        </h2>
-        <p>
-          Поэтому мы улучшаем интерфейс, добавляем способы оплаты
-          и слушаем ваши пожелания.
-          Расскажи, что можем сделать удобнее для тебя.
-        </p>
-      </div>
-
-      <a class="button button-secondary" href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">
-        Написать нам ↗
-      </a>
-    </section>
-
-    <section class="section" id="contacts">
-      <div class="section-heading">
-        <div>
-          <div class="eyebrow">03 / Оставайся на связи</div>
-          <h2>С любовью, семья Dogemo.</h2>
+      <section class="section" id="how">
+        <div class="section-heading reveal">
+          <div><div class="eyebrow">02 / Просто и понятно</div><h2>От выбора до результата.</h2></div>
+          <p>Сайт помогает найти нужное направление, а оформление происходит в Telegram.</p>
         </div>
-        <p>
-          Обновления, новые проекты и розыгрыши — в нашем канале.
-          Помощь — в поддержке.
-        </p>
-      </div>
+        <div class="steps">
+          <article class="step reveal" style="--delay: 60ms"><span class="step-number">01</span><h3>Выбери сервис</h3><p>Определи, что тебе нужно: Stars и Premium или обмен криптовалюты.</p></article>
+          <article class="step reveal" style="--delay: 120ms"><span class="step-number">02</span><h3>Перейди в бот</h3><p>Открой соответствующий Telegram-бот и ознакомься с актуальными условиями.</p></article>
+          <article class="step reveal" style="--delay: 180ms"><span class="step-number">03</span><h3>Оформи заказ</h3><p>Следуй инструкциям бота. При возникновении вопросов напиши в поддержку.</p></article>
+        </div>
+      </section>
 
-      <div class="contacts">
-        <a class="contact" href="https://t.me/dogemo_news" target="_blank" rel="noopener noreferrer">
-          <div>
-            <small>Новости семьи Dogemo</small>
-            <strong>@dogemo_news</strong>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
+      <section class="trust-panel reveal" aria-label="Наш подход">
+        <div><div class="eyebrow">03 / Наш подход</div><h2>Удобство начинается с ясности.</h2><p>Мы собрали сервисы в одном месте, чтобы тебе не приходилось искать нужные ссылки. Условия, доступные варианты и детали операции проверяй непосредственно перед оформлением в боте.</p></div>
+        <div class="trust-points">
+          <div class="trust-point"><strong>Понятный выбор</strong><span>Каждому направлению — свой Telegram-бот.</span></div>
+          <div class="trust-point"><strong>Актуальные условия</strong><span>Проверяй цены и детали перед подтверждением заказа.</span></div>
+          <div class="trust-point"><strong>Поддержка</strong><span>Можно обратиться с вопросом по работе сервисов.</span></div>
+          <div class="trust-point"><strong>Новости Dogemo</strong><span>Следи за обновлениями в официальном канале.</span></div>
+        </div>
+      </section>
 
-        <a class="contact" href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">
-          <div>
-            <small>Поддержка и предложения</small>
-            <strong>@lotos_support</strong>
-          </div>
-          <span class="arrow">↗</span>
-        </a>
-      </div>
-    </section>
+      <section class="section" id="faq">
+        <div class="section-heading reveal"><div><div class="eyebrow">04 / Помощь</div><h2>Частые вопросы.</h2></div><p>Короткие ответы на основные вопросы о том, как пользоваться сервисами Dogemo.</p></div>
+        <div class="faq-list">
+          <details class="reveal"><summary>Где купить Telegram Stars или Premium?</summary><p>Открой <a href="https://t.me/lotosrobot" target="_blank" rel="noopener noreferrer">@lotosrobot</a>, выбери нужную услугу и следуй инструкциям бота.</p></details>
+          <details class="reveal"><summary>Где посмотреть стоимость?</summary><p>Актуальную стоимость и доступные варианты проверяй непосредственно в соответствующем Telegram-боте перед оформлением заказа.</p></details>
+          <details class="reveal"><summary>Как воспользоваться обменником?</summary><p>Перейди в <a href="https://t.me/Dogemo_Exchangebot" target="_blank" rel="noopener noreferrer">@Dogemo_Exchangebot</a> и проверь доступные направления, сети, лимиты и условия обмена.</p></details>
+          <details class="reveal"><summary>Куда обратиться, если возник вопрос?</summary><p>Напиши в <a href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">@lotos_support</a>. Опиши ситуацию и приложи номер заказа, если он у тебя есть.</p></details>
+          <details class="reveal"><summary>Где следить за новостями?</summary><p>Обновления и новости публикуются в Telegram-канале <a href="https://t.me/dogemo_news" target="_blank" rel="noopener noreferrer">@dogemo_news</a>.</p></details>
+          <details class="reveal"><summary>Заказ оформляется на этом сайте?</summary><p>Нет. Сайт помогает выбрать сервис. Сам заказ оформляется внутри соответствующего Telegram-бота.</p></details>
+        </div>
+      </section>
+
+      <section class="contact-band reveal">
+        <div><h2>Остались вопросы?</h2><p>Напиши в поддержку — поможем разобраться.</p></div>
+        <div class="contact-actions"><a class="btn btn-primary" href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">Написать в поддержку ↗</a><a class="btn btn-secondary" href="https://t.me/dogemo_news" target="_blank" rel="noopener noreferrer">Новости Dogemo ↗</a></div>
+      </section>
+    </div>
   </main>
 
-  <footer>
-    <div class="container footer-content">
-      <a class="logo" href="#">dogemo.</a>
-      <span>
-        © <span id="year">2026</span> Dogemo.
-        Создаём удобство в Telegram.
-      </span>
-      <div class="footer-links">
-        <a href="https://t.me/lotosrobot" target="_blank" rel="noopener noreferrer">@lotosrobot ↗</a>
-        <a href="https://t.me/Dogemo_Exchangebot" target="_blank" rel="noopener noreferrer">@Dogemo_Exchangebot ↗</a>
-      </div>
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a class="logo" href="#top"><span class="logo-mark">D</span><span>dogemo<span>.</span></span></a>
+      <span>© <span id="year">2026</span> Dogemo. Сервисы в Telegram.</span>
+      <div class="footer-links"><a href="https://t.me/lotosrobot" target="_blank" rel="noopener noreferrer">Stars и Premium ↗</a><a href="https://t.me/Dogemo_Exchangebot" target="_blank" rel="noopener noreferrer">Exchange ↗</a><a href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">Поддержка ↗</a></div>
     </div>
   </footer>
 
+  <div class="mobile-dock" aria-label="Быстрый переход к сервисам">
+    <a href="https://t.me/lotosrobot" target="_blank" rel="noopener noreferrer">✦ Stars / Premium ↗</a>
+    <a href="https://t.me/Dogemo_Exchangebot" target="_blank" rel="noopener noreferrer">⇄ Обменник ↗</a>
+  </div>
+
   <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Плавное появление блоков при прокрутке. Без резких скачков и с поддержкой reduced motion.
+    const revealItems = document.querySelectorAll('.reveal');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if ('IntersectionObserver' in window && !reduceMotion) {
+      const observer = new IntersectionObserver((entries, currentObserver) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            currentObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -35px 0px' });
+      revealItems.forEach((item) => observer.observe(item));
+    } else {
+      revealItems.forEach((item) => item.classList.add('is-visible'));
+    }
   </script>
 </body>
 </html>
