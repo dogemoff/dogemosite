@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e1c">
+  <meta name="description" content="Telegram-боты: звёзды и Premium для Telegram, обмен криптовалюты.">
+  <title>Dogemo — боты в Telegram</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #080e1c;
+      --text: #eef4ff;
+      --muted: #96a8c8;
+      --accent: #a5c5ff;
+      --border: rgba(151, 186, 255, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+    }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: Inter, Arial, sans-serif;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 6px;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 48px));
+      margin-inline: auto;
+    }
+
+    .background {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .background::before,
+    .background::after {
+      content: "";
+      position: absolute;
+      width: 650px;
+      height: 650px;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.18;
+    }
+
+    .background::before {
+      top: -350px;
+      right: -150px;
+      background: #2861e7;
+    }
+
+    .background::after {
+      top: 850px;
+      left: -450px;
+      background: #3254d6;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8, 14, 28, 0.78);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    nav {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .logo span { color: #83afff; }
+
+    .navigation {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      font-size: 13px;
+      color: #c0cfe8;
+    }
+
+    .navigation a { transition: color 0.2s; }
+    .navigation a:hover { color: white; }
+
+    .nav-button {
+      padding: 9px 18px;
+      border: 1px solid rgba(135, 167, 220, 0.4);
+      border-radius: 40px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      align-items: center;
+      gap: 32px;
+      padding: 100px 0 90px;
+    }
+
+    .eyebrow {
+      color: #a7bfe9;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 10px;
+      border-radius: 50%;
+      background: #8cb7ff;
+      box-shadow: 0 0 18px #83adff;
+    }
+
+    h1 {
+      margin: 25px 0;
+      font-size: clamp(46px, 5.6vw, 76px);
+      font-weight: 600;
+      line-height: 1.09;
+      letter-spacing: -3px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .hero-description {
+      max-width: 460px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.9;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      padding: 14px 22px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    .button:hover { transform: translateY(-3px); }
+
+    .button-primary {
+      background: var(--accent);
+      color: #122340;
+      box-shadow: 0 12px 45px rgba(82, 139, 245, 0.12);
+    }
+
+    .button-primary:hover {
+      background: #bfd6ff;
+      box-shadow: 0 12px 45px rgba(82, 139, 245, 0.25);
+    }
+
+    .button-secondary {
+      border-color: var(--border);
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .hero-note {
+      margin-top: 20px;
+      color: #7187a8;
+      font-size: 11px;
+    }
+
+    .universe {
+      position: relative;
+      display: grid;
+      place-items: center;
+      height: 410px;
+      isolation: isolate;
+    }
+
+    .universe::before {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: #3e79ff;
+      filter: blur(85px);
+      opacity: 0.23;
+    }
+
+    .planet {
+      display: grid;
+      place-items: center;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      color: #daeaff;
+      font-size: 100px;
+      font-weight: 800;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(143, 186, 255, 0.65), transparent 45%),
+        radial-gradient(circle at 70% 80%, #1944b4, #10234f);
+      box-shadow:
+        inset 1px 1px 4px rgba(181, 211, 255, 0.7),
+        inset -18px -15px 45px #020717,
+        0 0 90px rgba(73, 138, 255, 0.15);
+    }
+
+    .orbit {
+      position: absolute;
+      width: 410px;
+      height: 160px;
+      border: 1px solid rgba(135, 176, 250, 0.35);
+      border-radius: 50%;
+      transform: rotate(-30deg);
+    }
+
+    .orbit-second {
+      width: 365px;
+      height: 195px;
+      border-color: rgba(135, 176, 250, 0.16);
+      transform: rotate(42deg);
+    }
+
+    .floating-icon {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 72px;
+      height: 72px;
+      border: 1px solid rgba(157, 197, 255, 0.25);
+      border-radius: 20px;
+      color: #c3dcff;
+      font-size: 38px;
+      background: linear-gradient(140deg, rgba(40, 71, 110, 0.8), rgba(17, 29, 53, 0.9));
+      backdrop-filter: blur(16px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .floating-star { top: 35px; left: 43px; }
+    .floating-plane { right: 40px; bottom: 35px; animation-delay: -3s; }
+
+    .floating-icon svg { width: 34px; height: 34px; }
+
+    .universe-caption {
+      position: absolute;
+      bottom: 0;
+      color: #718ab1;
+      font-size: 9px;
+      letter-spacing: 2.5px;
+    }
+
+    .section {
+      padding: 65px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 30px;
+      margin-bottom: 32px;
+    }
+
+    h2 {
+      margin: 12px 0 0;
+      font-size: 36px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -1.4px;
+    }
+
+    .section-heading > p {
+      max-width: 310px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .project-card {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: linear-gradient(120deg, rgba(21, 36, 60, 0.65), rgba(13, 22, 39, 0.7));
+      transition: transform 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(125, 166, 227, 0.45);
+    }
+
+    .project-art {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      height: 140px;
+      padding: 30px;
+      border-bottom: 1px solid var(--border);
+      background: radial-gradient(ellipse at 90% 10%, rgba(71, 122, 221, 0.18), transparent 70%);
+    }
+
+    .project-icon {
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      width: 74px;
+      height: 74px;
+      border: 1px solid rgba(168, 204, 255, 0.25);
+      border-radius: 22px;
+      color: #bad8ff;
+      font-size: 43px;
+      background: linear-gradient(140deg, rgba(136, 186, 255, 0.16), rgba(28, 67, 129, 0.15));
+    }
+
+    .project-type {
+      margin-left: auto;
+      padding: 4px 11px;
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      color: #acc4e9;
+      font-size: 10px;
+    }
+
+    .project-body {
+      padding: 29px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .category {
+      color: #7d9ed4;
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 8px 0;
+      font-size: 25px;
+      font-weight: 500;
+      letter-spacing: -0.6px;
+    }
+
+    .project-body p {
+      min-height: 64px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 22px 0 25px;
+    }
+
+    .tags span {
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: #a9bddd;
+      font-size: 10px;
+    }
+
+    /* Кнопка перехода в карточке */
+    .project-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: auto;
+      padding: 15px 22px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #122340;
+      background: var(--accent);
+      box-shadow: 0 12px 45px rgba(82, 139, 245, 0.12);
+      transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    .project-button:hover {
+      transform: translateY(-3px);
+      background: #bfd6ff;
+      box-shadow: 0 12px 45px rgba(82, 139, 245, 0.25);
+    }
+
+    .project-button .arrow {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 26px;
+    }
+
+    .benefit-number {
+      margin-bottom: 23px;
+      padding-bottom: 17px;
+      border-bottom: 1px solid var(--border);
+      color: #7c9dd2;
+      font-size: 11px;
+    }
+
+    .benefits h3 { font-size: 19px; }
+
+    .benefits p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .care {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      margin: 15px 0 65px;
+      padding: 45px;
+      border: 1px solid rgba(114, 158, 240, 0.25);
+      border-radius: 24px;
+      background:
+        radial-gradient(ellipse at 100% 0, rgba(49, 94, 203, 0.25), transparent 70%),
+        #111c30;
+    }
+
+    .care h2 { font-size: 30px; }
+
+    .care p {
+      max-width: 630px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .care .button { flex-shrink: 0; }
+
+    .contacts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .contact {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+    }
+
+    .contact small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .contact strong { font-size: 16px; font-weight: 500; }
+
+    .arrow { flex-shrink: 0; font-size: 22px; }
+
+    footer {
+      padding: 27px 0 35px;
+      border-top: 1px solid var(--border);
+      color: #7588a8;
+      font-size: 11px;
+    }
+
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    footer .logo { color: #c0d2ed; font-size: 21px; }
+
+    .footer-links {
+      display: flex;
+      gap: 22px;
+    }
+
+    @keyframes float {
+      50% { transform: translateY(-12px) rotate(4deg); }
+    }
+
+    @media (max-width: 850px) {
+      .hero { padding: 65px 0; }
+      h1 { font-size: 53px; letter-spacing: -2.5px; }
+      .universe { height: 350px; transform: scale(0.8); }
+      .care { padding: 30px; }
+      .care h2 { font-size: 27px; }
+    }
+
+    @media (max-width: 620px) {
+      .container { width: calc(100% - 36px); }
+      nav { min-height: 70px; }
+      .logo { font-size: 25px; }
+      .navigation { gap: 0; }
+      .navigation-section { display: none; }
+      .hero { display: block; padding: 48px 0 35px; }
+      h1 { font-size: clamp(39px, 11vw, 51px); }
+      .hero-description { font-size: 14px; }
+      .universe { height: 310px; margin-inline: -15px; transform: scale(0.77); }
+      .orbit { width: 360px; }
+      .orbit-second { width: 330px; }
+      .projects, .benefits, .contacts { grid-template-columns: 1fr; }
+      .section-heading { display: block; }
+      .section-heading > p { margin-top: 16px; }
+      h2 { font-size: 30px; }
+      .section { padding: 45px 0; }
+      .project-art { height: 115px; padding: 24px; }
+      .project-body { padding: 24px; }
+      .project-body p { min-height: 0; }
+      .benefits { gap: 18px; }
+      .benefit-number { margin-bottom: 15px; }
+      .care { display: block; margin-bottom: 45px; padding: 26px; }
+      .care .button { margin-top: 10px; }
+      .footer-content { flex-wrap: wrap; }
+      .footer-links { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="background" aria-hidden="true"></div>
+
+  <header>
+    <nav class="container" aria-label="Основная навигация">
+      <a class="logo" href="#" aria-label="Dogemo — главная">
+        dogemo<span>.</span>
+      </a>
+
+      <div class="navigation">
+        <a class="navigation-section" href="#projects">Наши боты</a>
+        <a class="navigation-section" href="#why">Почему мы</a>
+        <a class="nav-button" href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">
+          Поддержка ↗
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">
+          <span class="status-dot"></span>
+          Боты Dogemo в Telegram
+        </div>
+
+        <h1>
+          Твой Telegram.<br>
+          Больше <span>возможностей.</span>
+        </h1>
+
+        <p class="hero-description">
+          Звёзды и Premium для Telegram, обмен криптовалюты на рубли.
+          Знакомые задачи — в удобных ботах, которые всегда под рукой.
+        </p>
+
+        <div class="buttons">
+          <a class="button button-primary" href="#projects">
+            Выбрать бота <span>↗</span>
+          </a>
+          <a class="button button-secondary" href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">
+            Задать вопрос
+          </a>
+        </div>
+
+        <p class="hero-note">
+          Открывай прямо в Telegram. Оставайся с Dogemo.
+        </p>
+      </div>
+
+      <div class="universe" aria-hidden="true">
+        <div class="orbit"></div>
+        <div class="orbit orbit-second"></div>
+        <div class="planet">D</div>
+
+        <div class="floating-icon floating-star">✦</div>
+        <div class="floating-icon floating-plane">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="m21 3-4 18-6-5-3 3 1-6L21 3 6 12l-4-2Z"/>
+          </svg>
+        </div>
+
+        <div class="universe-caption">
+          ONE FAMILY. MORE POSSIBILITIES.
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="projects">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">01 / Наши боты</div>
+          <h2>Каждому делу — свой бот.</h2>
+        </div>
+        <p>
+          Выбери нужный сервис.<br>
+          Все основные ссылки — в одном месте.
+        </p>
+      </div>
+
+      <div class="projects">
+        <article class="project-card">
+          <div class="project-art">
+            <div class="project-icon" aria-hidden="true">✦</div>
+            <span class="project-type">Звёзды и Premium</span>
+          </div>
+
+          <div class="project-body">
+            <span class="category">Для себя и для друзей</span>
+            <h3>@lotosrobot</h3>
+
+            <p>
+              Покупка Telegram Stars и подписки Telegram Premium —
+              себе или в подарок друзьям. Быстро, безопасно и по приятному курсу.
+            </p>
+
+            <div class="tags">
+              <span>Telegram Stars</span>
+              <span>Premium</span>
+              <span>Подарки</span>
+            </div>
+
+            <a class="project-button" href="https://t.me/lotosrobot" target="_blank" rel="noopener noreferrer">
+              Открыть @lotosrobot
+              <span class="arrow">↗</span>
+            </a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-art">
+            <div class="project-icon" aria-hidden="true">⇄</div>
+            <span class="project-type">Криптообменник</span>
+          </div>
+
+          <div class="project-body">
+            <span class="category">Твоя крипта в Telegram</span>
+            <h3>@Dogemo_Exchangebot</h3>
+
+            <p>
+              Обмен криптовалюты на рубли и покупка крипты за рубли.
+              Простой интерфейс, понятный курс и быстрые выплаты.
+            </p>
+
+            <div class="tags">
+              <span>Крипта → рубли</span>
+              <span>Рубли → крипта</span>
+              <span>Быстрые выплаты</span>
+            </div>
+
+            <a class="project-button" href="https://t.me/Dogemo_Exchangebot" target="_blank" rel="noopener noreferrer">
+              Открыть @Dogemo_Exchangebot
+              <span class="arrow">↗</span>
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="why">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">02 / Почему выбирают нас</div>
+          <h2>Меньше лишнего.<br>Больше удобства.</h2>
+        </div>
+        <p>
+          Развиваем проекты вокруг задач,
+          с которыми ты сталкиваешься каждый день.
+        </p>
+      </div>
+
+      <div class="benefits">
+        <article>
+          <div class="benefit-number">01 — Скорость</div>
+          <h3>Быстрые операции</h3>
+          <p>
+            Заявки обрабатываются оперативно —
+            без долгих ожиданий и лишних шагов.
+          </p>
+        </article>
+
+        <article>
+          <div class="benefit-number">02 — Доверие</div>
+          <h3>Честные отзывы</h3>
+          <p>
+            Реальные отзывы покупателей,
+            без накруток и приукрашиваний.
+          </p>
+        </article>
+
+        <article>
+          <div class="benefit-number">03 — Бонусы</div>
+          <h3>Розыгрыши среди покупателей</h3>
+          <p>
+            Регулярно проводим розыгрыши
+            для тех, кто пользуется нашими ботами.
+          </p>
+        </article>
+
+        <article>
+          <div class="benefit-number">04 — Комфорт</div>
+          <h3>Удобный интерфейс</h3>
+          <p>
+            Всё понятно с первого клика —
+            оформление заказа занимает секунды.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="care">
+      <div>
+        <div class="eyebrow">Для нас это главное</div>
+        <h2>
+          «Покупатели всегда довольны» —<br>
+          наш ориентир.
+        </h2>
+        <p>
+          Поэтому мы улучшаем интерфейс, добавляем способы оплаты
+          и слушаем ваши пожелания.
+          Расскажи, что можем сделать удобнее для тебя.
+        </p>
+      </div>
+
+      <a class="button button-secondary" href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">
+        Написать нам ↗
+      </a>
+    </section>
+
+    <section class="section" id="contacts">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">03 / Оставайся на связи</div>
+          <h2>С любовью, семья Dogemo.</h2>
+        </div>
+        <p>
+          Обновления, новые проекты и розыгрыши — в нашем канале.
+          Помощь — в поддержке.
+        </p>
+      </div>
+
+      <div class="contacts">
+        <a class="contact" href="https://t.me/dogemo_news" target="_blank" rel="noopener noreferrer">
+          <div>
+            <small>Новости семьи Dogemo</small>
+            <strong>@dogemo_news</strong>
+          </div>
+          <span class="arrow">↗</span>
+        </a>
+
+        <a class="contact" href="https://t.me/lotos_support" target="_blank" rel="noopener noreferrer">
+          <div>
+            <small>Поддержка и предложения</small>
+            <strong>@lotos_support</strong>
+          </div>
+          <span class="arrow">↗</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <a class="logo" href="#">dogemo.</a>
+      <span>
+        © <span id="year">2026</span> Dogemo.
+        Создаём удобство в Telegram.
+      </span>
+      <div class="footer-links">
+        <a href="https://t.me/lotosrobot" target="_blank" rel="noopener noreferrer">@lotosrobot ↗</a>
+        <a href="https://t.me/Dogemo_Exchangebot" target="_blank" rel="noopener noreferrer">@Dogemo_Exchangebot ↗</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
